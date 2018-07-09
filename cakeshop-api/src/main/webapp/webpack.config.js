@@ -14,6 +14,9 @@ module.exports = {
 		aggregateTimeout: 300,
 		poll: 1000
 	},
+	externals:[{
+      xmlhttprequest: '{XMLHttpRequest:XMLHttpRequest}'
+  }],
 	devServer: {
 		historyApiFallback: true,
 		hot: true,
