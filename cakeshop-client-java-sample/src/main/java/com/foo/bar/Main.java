@@ -17,21 +17,24 @@ import java.util.concurrent.ExecutionException;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
-        String address = null;
-        if (args.length > 0) {
-            address = args[0];
-        }
+      String address = null;
+      if (args.length > 0) {
+        address = args[0];
+      }
 
-        if (address == null) {
-            // enter address here or via command line
-            address = "0x881ba6a77748bf1d54b7cb653eabba9a1bc7a0a2";
-        }
+      if (address == null) {
+        // enter address here or via command line
+        address = "0xce1663b2f636a04fd661ff3cafd7a96458fe3696";
+      }
 
-        // setup our manager
-        final ClientManager manager = ClientManager.create("http://localhost:8080/cakeshop");
-        ContractApi contractApi = manager.getClient(ContractApi.class);
+      // setup our manager
+      final ClientManager manager = ClientManager.create("http://localhost:8080/cakeshop");
+      ContractApi contractApi = manager.getClient(ContractApi.class);
+
+      for (int i = 0; i < 1000000; i++) {
+
 
         // get val using "full" interface
         final SimpleStorageContract ss1 = SimpleStorageContract.at(contractApi, address);
@@ -45,10 +48,10 @@ public class Main {
 
         // watch txn events
         manager.subscribe(new TransactionEventHandler() {
-            @Override
-            public void onData(Transaction data) {
-                System.out.println("Got txn: " + data.getId());
-            }
+          @Override
+          public void onData(Transaction data) {
+            System.out.println("Got txn: " + data.getId());
+          }
         });
 
         // incr val by 1000
@@ -56,20 +59,30 @@ public class Main {
 
         // wait for txn to be committed and print info
         final ListenableFuture<Transaction> txFuture = manager.waitForTx(tr);
-        txFuture.addListener(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    System.out.println("tx committed:\n" + txFuture.get().toString());
-                    System.out.println(ss2.get()); // read new value
-                    System.out.print("bye!");
-                    manager.shutdown();
-                    System.exit(0);
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, MoreExecutors.directExecutor());
+//        txFuture.addListener(new Runnable() {
+//          @Override
+//          public void run() {
+//            try {
+//              System.out.println("tx committed:\n" + txFuture.get().toString());
+//              System.out.println(ss2.get()); // read new value
+//              System.out.print("bye!");
+//              manager.shutdown();
+//              System.exit(0);
+//            } catch (InterruptedException | ExecutionException e) {
+//              e.printStackTrace();
+//            }
+//          }
+//        }, MoreExecutors.directExecutor());
+
+        Thread.sleep(500);
+
+
+      }
+
+      manager.shutdown();
+      System.exit(0);
+
     }
+
 
 }
